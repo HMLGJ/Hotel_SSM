@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.hotel.dao.HotelAdminDao">
+	<!-- 测试根据用户名查询信息 -->
+	<select id="findHotelAdmin_name" resultType="HotelAdmin">
+		select * from sys_hoteladmin where hotelAdmin_name = #{hotelAdmin_name}
+	</select>
+	
+	<!-- 根据部门编号查询该部门下的员工（酒店管理员）数量 -->
+	<select id="getHotelAdminCountByDeptId" resultType="int">
+		select count(1) from sys_hoteladmin where hotelAdmin_deptId = #{hotelAdmin_deptId}
+	</select>
+	
+	<!-- 根据角色编号查询员工（酒店管理员）数量 -->
+	<select id="gerHotelAdminCountByRoleId" resultType="int">
+		select count(1) from sys_role_hoteladmin rh
+		inner join sys_hoteladmin h on rh.hotelAdmin_id = h.hotelAdmin_id
+		where rh.hotelAdmin_id= #{hotelAdmin_id}
+	</select>
+	
+	<!-- 查询管理员列表 -->
+	<select id="findHotelAdminList" resultType="HotelAdmin">
+		select ha.*,d.dept_name as hotelAdmin_deptName from sys_hotelAdmin ha
+		inner join sys_dept d on d.dept_id = ha.hotelAdmin_deptId
+		<where>
+			<if test="hotelAdmin_name!=null and hotelAdmin_name!=''">
+				and ha.hotelAdmin_name like concat('%',#{hotelAdmin_name},'%')
+			</if>
+			<!-- 日期和int类型的不能!='' 不然会报错 -->
+			<if test="hotelAdmin_deptId!=null">
+				and ha.hotelAdmin_deptId = #{hotelAdmin_deptId}
+			</if>
+		</where>
+		order by ha.hotelAdmin_id
+	</select>
+	
+	<!-- 添加管理员 -->
+	<insert id="addHotelAdmin">
+        insert into sys_hoteladmin (hotelAdmin_name,hotelAdmin_deptId,hotelAdmin_password,hotelAdmin_salt,hotelAdmin_createdBy,hotelAdmin_createDate,hotelAdmin_desc) 
+        values(#{hotelAdmin_name},#{hotelAdmin_deptId},#{hotelAdmin_password},#{hotelAdmin_salt},#{hotelAdmin_createdBy},#{hotelAdmin_createDate},#{hotelAdmin_desc})
+    </insert>
+    
+     <!--修改管理员-->
+    <update id="updateHotelAdmin">
+        update sys_hoteladmin
+        <set>
+            <if test="hotelAdmin_deptId!=null">
+                hotelAdmin_deptId = #{hotelAdmin_deptId},
+            </if>
+            <if test="hotelAdmin_password!=null and hotelAdmin_password!=''">
+                hotelAdmin_password = #{hotelAdmin_password},
+            </if>
+            <if test="hotelAdmin_salt!=null and hotelAdmin_salt!=''">
+                hotelAdmin_salt = #{hotelAdmin_salt},
+            </if>
+            <if test="hotelAdmin_desc!=null and hotelAdmin_desc!=''">
+                hotelAdmin_desc = #{hotelAdmin_desc},
+            </if>
+        </set>
+        where hotelAdmin_id = #{hotelAdmin_id}
+    </update>
+    
+    <!-- 以后出去工作用的是增强版pluas，不再需要添加标签,直接调方法。 -->
+    <!-- 增强pluas用法,pom.xml导入依赖，然后在Dao层继承封装接口，最后在Service实现类上调用方法 -->
+    <!-- 删除管理员 -->
+    <delete id="deleteById">
+    	delete from sys_hoteladmin where hotelAdmin_id = #{hotelAdmin_id}
+    </delete>
+    
+    <!-- 删除管理员角色关系的数据 -->
+    <delete id="deleteHotelAdminAndRloe">
+    	delete from sys_role_hoteladmin where hotelAdmin_id = #{hotelAdmin_id}
+    </delete>
+    
+    <!-- 完善功能，根据部门id查询部门名称 -->
+    <select id="ceshi" resultType="HotelAdmin">
+    	select hotelAdmin_deptName from sys_hoteladmin where hotelAdmin_deptId = #{hotelAdmin_deptId}
+    </select>
+</mapper>

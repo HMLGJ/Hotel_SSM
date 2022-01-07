@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotel.dao.UserDao">
+	<!-- 测试根据用户手机号查询信息 -->
+	<select id="findUser_Phone" resultType="User">
+		select * from t_user where user_phone = #{user_phone}
+	</select>
+	
+	<!--添加用户-->
+    <insert id="addUser">
+        insert into t_user(user_name,user_password,user_realName,user_idCard,user_phone,user_status,user_createDate,user_salt)
+        values(#{user_name},#{user_password},#{user_realName},#{user_idCard},#{user_phone},#{user_status},#{user_createDate},#{user_salt})
+    </insert>
+
+    <!--根据user_name查询用户信息-->
+    <select id="findUserByName" resultType="User">
+        select * from t_user where user_name = #{user_name}
+    </select>
+	
+</mapper>

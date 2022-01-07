@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.hotel.dao.MenuDao">
+	<!-- 查询所有菜单列表 -->
+	<select id="findMenuList" resultType="Menu">
+		select * from sys_menu
+	</select>
+	
+	<!-- 根据角色ID查询该角色已经拥有的菜单ID的方法 -->
+	<select id="findMenuIdListByRoleId" resultType="int">
+		select menu_id from sys_role_menu where role_id=#{role_id}
+	</select>
+	
+	<!-- 根据菜单编号查询菜单信息 -->
+	<select id="findMenuByMenuId" resultType="Menu">
+		select * from sys_menu where menu_id in
+		<!-- collection="" 如果是List集合就填list,如果是数据就填array,如果是Map集合就填manp集合里面的键-->
+		<foreach collection="list" item="menu_ids" open="(" separator="," close=")">
+			#{menu_ids}
+		</foreach>
+	</select>
+	
+	<!--查询菜单列表-->
+    <select id="findMenuListByPage" resultType="Menu">
+        select * from sys_menu
+        <where>
+        	<!-- or menu_pid = #{menu_id},这个用来展示点击父节点可以展示子节点内容 -->
+            <if test="menu_id!=null">
+                and menu_id = #{menu_id} or menu_pid = #{menu_id}
+            </if>
+        </where>
+        order by menu_id
+    </select>
+    
+    <!-- 添加菜单 -->
+	<insert id="addMenu">
+		insert into sys_menu (menu_pid,menu_title,menu_spread,menu_icon,menu_target,menu_href)
+		values(#{menu_pid},#{menu_title},#{menu_spread},#{menu_icon},#{menu_target},#{menu_href})
+	</insert>
+	
+	<!--修改菜单-->
+    <update id="updateMenu">
+        update sys_menu
+        <set>
+            <if test="menu_pid!=null">
+                menu_pid = #{menu_pid},
+            </if>
+            <if test="menu_spread!=null">
+                menu_spread = #{menu_spread},
+            </if>
+            <if test="menu_title!=null and menu_title!=''">
+                menu_title = #{menu_title},
+            </if>
+            <if test="menu_href!=null and menu_href!=''">
+                menu_href = #{menu_href},
+            </if>
+            <if test="menu_target!=null and menu_target!=''">
+                menu_target = #{menu_target},
+            </if>
+            <if test="menu_icon!=null and menu_icon!=''">
+                menu_icon = #{menu_icon},
+            </if>
+        </set>
+        where menu_id = #{menu_id}
+    </update>
+
+    <!--删除菜单-->
+    <delete id="deleteById">
+        delete from sys_menu where menu_id = #{menu_id}
+    </delete>
+    
+    <!--根据菜单ID查询该菜单是否有子菜单（也可以用同表连接查询）-->
+    <select id="getMenuCountByMenuId" resultType="int">
+        select count(1) from sys_menu where menu_pid = #{menu_pid}
+    </select>
+    
+    
+</mapper>

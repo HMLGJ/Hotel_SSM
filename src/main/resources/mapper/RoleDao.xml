@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotel.dao.RoleDao">
+	<!--resultType="Role",返回的是泛型  -->
+	<select id="findRolerList" resultType="Role">
+		select * from sys_role
+        <where>
+            <if test="role_name!=null and role_name!=''">
+                and role_name like concat('%',#{role_name},'%')
+            </if>
+        </where>
+	</select>
+	
+	<!--添加角色-->
+    <insert id="addRole">
+        insert into sys_role (role_name,role_desc) values(#{role_name},#{role_desc})
+    </insert>
+    <!--更改角色-->
+    <update id="updateRole">
+        update sys_role
+        <set>
+            <if test="role_name!=null and role_name!=''">
+                role_name = #{role_name},
+            </if>
+            <if test="role_desc!=null and role_desc!=''">
+                role_desc = #{role_desc},
+            </if>
+        </set>
+        where role_id = #{role_id}
+    </update>
+    <!--删除角色-->
+    <delete id="deleteById">
+        delete from sys_role where role_id = #{role_id}
+    </delete>
+    
+    <!-- 查询所有角色列表 -->
+    <select id="findRoleListByMap" resultType="map">
+		select * from sys_role
+	</select>
+	
+	<!-- 根据管理员id查询管理员拥有的角色列表(未实现) -->
+    <select id="findHotelAdminRoleByHotelAdminId" resultType="int">
+		select role_id from sys_role_hoteladmin where hotelAdmin_id = #{hotelAdmin_id}
+	</select>
+	
+	
+</mapper>

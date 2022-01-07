@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+encoding//src/main/java/com/hotel/controller=UTF-8
+encoding//src/main/java/com/hotel/controller/IndexController.java=UTF-8
+encoding//src/main/java/com/hotel/entity/Checkin.java=UTF-8
+encoding//src/main/java/com/hotel/service/impl/UserServiceImpl.java=UTF-8
+encoding//src/main/resources/database.properties=UTF-8
+encoding//src/main/webapp/statics/layui/api=UTF-8
+encoding//src/main/webapp/statics/layui/api/init.json=UTF-8
+encoding//src/main/webapp/statics/layui/css/layuimini.css=UTF-8
+encoding/<project>=UTF-8

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.hotel.dao.CheckinDao">
+
+    <resultMap id="BaseResultMap" type="Checkin">
+        <id column="checkin_id"  property="checkin_id" />
+        <result column="checkin_roomtypeid"  property="checkin_roomtypeid" />
+        <result column="checkin_roomid"  property="checkin_roomid" />
+        <result column="checkin_customername"  property="checkin_customername" />
+        <result column="checkin_idcard"  property="checkin_idcard" />
+        <result column="checkin_phone"  property="checkin_phone" />
+        <result column="checkin_arrivedate"  property="checkin_arrivedate" />
+        <result column="checkin_leavedate"  property="checkin_leavedate" />
+        <result column="checkin_payprice"  property="checkin_payprice" />
+        <result column="checkin_status"  property="checkin_status" />
+        <result column="checkin_remark"  property="checkin_remark" />
+    </resultMap>
+
+    <resultMap id="checkInRoomAndTypeResultMap" type="Checkin" extends="BaseResultMap">
+        <!-- 配置订单与房间关系 -->
+        <association property="checkin_room" javaType="Room">
+            <id column="id" property="room_id"/>
+            <result property="room_roomnum" column="room_roomnum"/>
+        </association>
+        <!-- 配置订单与房型关系 -->
+        <association property="checkin_roomType" javaType="RoomType">
+            <id property="id" column="roomType_id"/>
+            <result property="roomType_name" column="roomType_name"/>
+        </association>
+    </resultMap>
+
+    <select id="findCheckinList" resultMap="checkInRoomAndTypeResultMap">
+        select t1.*,t2.room_roomnum,t3.roomType_name from t_checkin t1
+		inner join t_room t2 on t2.room_id = t1.checkin_roomid
+		inner join t_room_type t3 on t3.roomType_id = t2.room_roomtypeid
+        <where>
+            <if test="checkin_customername!=null and checkin_customername!=''">
+                and t1.checkin_customername like concat('%',#{checkin_customername},'%')
+            </if>
+            <if test="checkin_idcard!=null and checkin_idcard!=''">
+                and t1.checkin_idcard like concat('%',#{checkin_idcard},'%')
+            </if>
+            <if test="checkin_phone!=null and checkin_phone!=''">
+                and t1.checkin_phone like concat('%',#{checkin_phone},'%')
+            </if>
+            <if test="checkin_roomtypeid!=null">
+                and t1.checkin_roomtypeid = #{checkin_roomtypeid}
+            </if>
+            <if test="checkin_status!=null">
+                and t1.checkin_status = #{checkin_status}
+            </if>
+            <if test="checkin_arrivedate!=null">
+                <![CDATA[and t1.checkin_arrivedate >= #{checkin_arrivedate}]]>
+            </if>
+            <if test="checkin_leavedate!=null">
+                <![CDATA[and t1.checkin_leavedate <= #{checkin_leavedate}]]>
+            </if>
+        </where>
+    </select>
+
+    <insert id="addCheckin">
+        insert into t_checkin (checkin_roomtypeid,checkin_roomid,checkin_customername,checkin_idcard,checkin_phone,checkin_arrivedate,checkin_leavedate,checkin_payprice,checkin_status,checkin_remark,checkin_ordersid,checkin_createdate,checkin_createdby)
+        values (#{checkin_roomtypeid},#{checkin_roomid},#{checkin_customername},#{checkin_idcard},#{checkin_phone},#{checkin_arrivedate},#{checkin_leavedate},#{checkin_payprice},#{checkin_status},#{checkin_remark},#{checkin_ordersid},#{checkin_createdate},#{checkin_createdby})
+    </insert>
+    
+ 
+    
+
+    <update id="updateCheckin">
+        update t_checkin
+        <set>
+            <if test="checkin_roomtypeid != null">
+                checkin_roomtypeid = #{checkin_roomtypeid},
+            </if>
+            <if test="checkin_roomid != null">
+                checkin_roomid = #{checkin_roomid},
+            </if>
+            <if test="checkin_customername != null">
+                checkin_customername = #{checkin_customername},
+            </if>
+            <if test="checkin_idcard != null">
+                checkin_idcard = #{checkin_idcard},
+            </if>
+            <if test="checkin_phone != null">
+                checkin_phone = #{checkin_phone},
+            </if>
+            <if test="checkin_arrivedate != null">
+                checkin_arrivedate = #{checkin_arrivedate},
+            </if>
+            <if test="checkin_leavedate != null">
+                checkin_leavedate = #{checkin_leavedate},
+            </if>
+            <if test="checkin_payprice != null">
+                checkin_payprice = #{checkin_payprice},
+            </if>
+            <if test="checkin_status != null">
+                checkin_status = #{checkin_status},
+            </if>
+            <if test="checkin_remark != null">
+                checkin_remark = #{checkin_remark},
+            </if>
+        </set>
+        where checkin_id = #{checkin_id}
+    </update>
+
+</mapper>

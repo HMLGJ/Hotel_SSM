@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotel.dao.RoomTypeDao">
+
+    <select id="findRoomTypeList" resultType="RoomType">
+        select * from t_room_type
+        <where>
+            <if test="roomType_name!=null and roomType_name!=''">
+                and roomType_name like concat('%',#{roomType_name},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="addRoomType">
+        insert into t_room_type (roomType_name,roomType_photo,roomType_price,roomType_livenum,roomType_bednum,roomType_roomnum,roomType_reservednum,roomType_avilablenum,roomType_livednum,roomType_status,roomType_remark)
+        values(#{roomType_name},#{roomType_photo},#{roomType_price},#{roomType_livenum},#{roomType_bednum},#{roomType_roomnum},#{roomType_reservednum},#{roomType_avilablenum},#{roomType_livednum},#{roomType_status},#{roomType_remark})
+    </insert>
+
+    <update id="updateRoomType">
+        update t_room_type
+        <set>
+            <if test="roomType_name!=null and roomType_name!=''">
+                roomType_name = #{roomType_name},
+            </if>
+            <if test="roomType_photo!=null and roomType_photo!=''">
+                roomType_photo = #{roomType_photo},
+            </if>
+            <if test="roomType_price!=null">
+                roomType_price = #{roomType_price},
+            </if>
+            <if test="roomType_livenum!=null">
+                roomType_livenum = #{roomType_livenum},
+            </if>
+            <if test="roomType_bednum!=null">
+                roomType_bednum = #{roomType_bednum},
+            </if>
+            <if test="roomType_roomnum!=null">
+                roomType_roomnum = #{roomType_roomnum},
+            </if>
+            <if test="roomType_reservednum!=null">
+                roomType_reservednum = #{roomType_reservednum},
+            </if>
+            <if test="roomType_avilablenum!=null">
+                roomType_avilablenum = #{roomType_avilablenum},
+            </if>
+            <if test="roomType_livednum!=null">
+                roomType_livednum = #{roomType_livednum},
+            </if>
+            <if test="roomType_status!=null">
+                roomType_status = #{roomType_status},
+            </if>
+            <if test="roomType_remark!=null and roomType_remark!=''">
+                roomType_remark = #{roomType_remark},
+            </if>
+        </set>
+        where roomType_id = #{roomType_id}
+    </update>
+       
+    <select id="findById" resultType="RoomType">
+        select * from t_room_type where roomType_id = #{roomType_id}
+    </select>
+    
+    <delete id="deleteById">
+        delete from t_room_type where roomType_id = #{roomType_id}
+    </delete>
+    
+
+</mapper>

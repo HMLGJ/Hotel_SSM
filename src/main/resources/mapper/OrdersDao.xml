@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hotel.dao.OrdersDao">
+
+    <!-- 定义基础的ResultMap -->
+    <resultMap id="BaseResultMap" type="Orders">
+        <id column="orders_id" property="orders_id" />
+        <result column="orders_no"  property="orders_no" />
+        <result column="orders_accountid" property="orders_accountid" />
+        <result column="orders_roomtypeid"  property="orders_roomtypeid" />
+        <result column="orders_roomid"  property="orders_roomid" />
+        <result column="orders_reservationname" property="orders_reservationname" />
+        <result column="orders_idcard" property="orders_idcard" />
+        <result column="orders_phone" property="orders_phone" />
+        <result column="orders_status"  property="orders_status" />
+        <result column="orders_reservedate"  property="orders_reservedate" />
+        <result column="orders_arrivedate"  property="orders_arrivedate" />
+        <result column="orders_leavedate" property="orders_leavedate" />
+        <result column="orders_reserveprice"  property="orders_reserveprice" />
+        <result column="orders_remark"  property="orders_remark" />
+    </resultMap>
+
+    <resultMap id="ordersRoomAndTypeResultMap" type="Orders" extends="BaseResultMap">
+        <!-- 配置订单与房间关系 -->
+        <association property="orders_room" javaType="Room">
+            <id column="id" property="room_id"/>
+            <result property="room_roomnum" column="room_roomnum"/>
+        </association>
+        <!-- 配置订单与房型关系 -->
+        <association property="orders_roomType" javaType="RoomType">
+            <id property="id" column="roomType_id"/>
+            <result property="roomType_name" column="roomType_name"/>
+        </association>
+    </resultMap>
+
+
+    <insert id="addOrders">
+        insert into t_orders (orders_no,orders_accountid,orders_roomtypeid,orders_roomid,orders_reservationname,orders_idcard,orders_phone,orders_status,orders_reservedate,
+        orders_arrivedate,orders_leavedate,orders_reserveprice,orders_remark)
+        values (#{orders_no},#{orders_accountid},#{orders_roomtypeid},#{orders_roomid},#{orders_reservationname},#{orders_idcard},#{orders_phone},
+        #{orders_status},#{orders_reservedate},#{orders_arrivedate},#{orders_leavedate},#{orders_reserveprice},#{orders_remark})
+    </insert>
+
+    <select id="findOrdersList" resultMap="ordersRoomAndTypeResultMap">
+        select o.*,r.room_roomnum,t.roomType_name from t_orders o
+		inner join t_room r on r.room_id = o.orders_roomid
+		inner join t_room_type t on t.roomType_id = r.room_roomtypeid
+        <where>
+            <if test="orders_reservationname!=null and orders_reservationname!=''">
+                and o.orders_reservationname like concat('%',#{orders_reservationname},'%')
+            </if>
+            <if test="orders_idcard!=null and orders_idcard!=''">
+                and o.orders_idcard like concat('%',#{orders_idcard},'%')
+            </if>
+            <if test="orders_phone!=null and orders_phone!=''">
+                and o.orders_phone like concat('%',#{orders_phone},'%')
+            </if>
+            <if test="orders_roomtypeid!=null">
+                and o.orders_roomtypeid = #{orders_roomtypeid}
+            </if>
+            <if test="orders_status!=null">
+                and o.orders_status = #{orders_status}
+            </if>
+            <if test="startDate!=null">
+                <![CDATA[ and o.orders_reservedate >= #{startDate} ]]>
+            </if>
+            <if test="endDate!=null">
+                <![CDATA[ and o.orders_reservedate <= #{endDate }]]>
+            </if>
+        </where>
+    </select>
+
+    <update id="updateOrders" parameterType="Orders">
+        update t_orders
+        <set>
+            <if test="orders_no != null">
+                orders_no = #{orders_no},
+            </if>
+            <if test="orders_accountid != null">
+                orders_accountid = #{orders_accountid},
+            </if>
+            <if test="orders_roomtypeid != null">
+                orders_roomtypeid = #{orders_roomtypeid},
+            </if>
+            <if test="orders_roomid != null">
+                orders_roomid = #{orders_roomid},
+            </if>
+            <if test="orders_reservationname != null">
+                orders_reservationname = #{orders_reservationname},
+            </if>
+            <if test="orders_idcard != null">
+                orders_idcard = #{orders_idcard},
+            </if>
+            <if test="orders_phone != null">
+                orders_phone = #{orders_phone},
+            </if>
+            <if test="orders_status != null">
+                orders_status = #{orders_status},
+            </if>
+            <if test="orders_reservedate != null">
+                orders_reservedate = #{orders_reservedate},
+            </if>
+            <if test="orders_arrivedate != null">
+                orders_arrivedate = #{orders_arrivedate},
+            </if>
+            <if test="orders_leavedate != null">
+                orders_leavedate = #{orders_leavedate},
+            </if>
+            <if test="orders_reserveprice != null">
+                orders_reserveprice = #{orders_reserveprice},
+            </if>
+            <if test="orders_remark != null">
+                orders_remark = #{orders_remark},
+            </if>
+        </set>
+        where orders_id = #{orders_id}
+    </update>
+
+</mapper>

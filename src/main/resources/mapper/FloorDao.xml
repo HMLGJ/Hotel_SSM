@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.hotel.dao.FloorDao">
+
+	<!-- 查询楼层 -->
+    <select id="findFloorList" resultType="Floor">
+        select * from t_floor
+        <where>
+            <if test="floor_name!=null and floor_name!=''">
+                and floor_name like concat('%',#{floor_name},'%')
+            </if>
+        </where>
+    </select>
+	
+	<!-- 添加楼层 -->
+    <insert id="addFloor">
+        insert into t_floor(floor_name,floor_remark) values (#{floor_name},#{floor_remark})
+    </insert>
+
+	<!-- 修改楼层 -->
+    <update id="updateFloor">
+        update t_floor
+        <set>
+            <if test="floor_name!=null and floor_name!=''">
+                floor_name = #{floor_name},
+            </if>
+            <if test="floor_remark!=null and floor_remark!=''">
+                floor_remark = #{floor_remark},
+            </if>
+        </set>
+        where floor_id = #{floor_id}
+    </update>
+	
+	<!-- 删除楼层 -->
+    <delete id="deleteById">
+        delete from t_floor where floor_id = #{floor_id}
+    </delete>
+</mapper>
